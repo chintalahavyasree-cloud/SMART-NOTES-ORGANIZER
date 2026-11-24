@@ -1,19 +1,50 @@
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-
-# Virtual environments
+# Python Virtual Environment
 venv/
 myenv/
+env/
+.venv/
+
+# Python Cache Files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables and Secrets
 .env
+.env.*
+!.env.example
 
-# Database files (avoid uploading personal data)
-*.db
-
-# VS Code
+# IDE Settings
 .vscode/
+.idea/
 
-# Python cache
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Log Files
+*.log
+
+# Database Files
+*.sqlite3
+*.db-journal
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing and Coverage
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Build Files
+build/
+dist/
+*.egg-info/
+
+# Temporary Files
+*.tmp
+*.bak
+*.swp
