@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Smart Note</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="form-page">
+
+    <div class="form-container">
+
+        <h1>✏️ Edit Smart Note</h1>
+
+        <p>Update your note information.</p>
+
+        <form method="POST">
+
+            <label>Note Title</label>
+
+            <input
+                type="text"
+                name="title"
+                value="{{ note['title'] }}"
+                required
+            >
+
+            <label>Description</label>
+
+            <textarea
+                name="content"
+                rows="8"
+            >{{ note['content'] or '' }}</textarea>
+
+
+            <label>Category</label>
+
+            <select name="category">
+
+                <option value="Auto Detect">
+                    🧠 Automatically Detect Category
+                </option>
+
+                {% for cat in categories %}
+
+                    <option
+                        value="{{ cat }}"
+                        {% if note['category'] == cat %}selected{% endif %}
+                    >
+                        {{ cat }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <label>Tags</label>
+
+            <input
+                type="text"
+                name="tags"
+                value="{{ note['tags'] or '' }}"
+            >
+
+
+            <label>Priority</label>
+
+            <select name="priority">
+
+                {% for p in priorities %}
+
+                    <option
+                        value="{{ p }}"
+                        {% if note['priority'] == p %}selected{% endif %}
+                    >
+                        {{ p }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <label>Reminder Date and Time</label>
+
+            <input
+                type="datetime-local"
+                name="reminder_at"
+                value="{{ note['reminder_at'] or '' }}"
+            >
+
+            <p class="form-help">
+                Leave blank if you don't need a reminder.
+            </p>
+
+
+            <div class="form-actions">
+
+                <button type="submit" class="add-btn">
+                    Update Note
+                </button>
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Notes Organizer Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+        defer>
+    </script>
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>📝 Smart Notes</h2>
+
+        <p class="sidebar-heading">MENU</p>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="{% if not selected_category %}active{% endif %}">
+            🏠 All Notes
+        </a>
+
+        <p class="sidebar-heading">CATEGORIES</p>
+
+        {% for cat in categories %}
+
+            <a href="{{ url_for('dashboard', category=cat) }}"
+               class="{% if selected_category == cat %}active{% endif %}">
+
+                {% if cat == 'Personal' %}👤
+                {% elif cat == 'Academic' %}🎓
+                {% elif cat == 'Work' %}💼
+                {% else %}📁{% endif %}
+
+                {{ cat }}
+
+            </a>
+
+        {% endfor %}
+
+
+        <div class="sidebar-bottom">
+
+            <p>👋 Hello, {{ session['username'] }}</p>
+
+            <button type="button"
+                    class="reminder-enable"
+                    id="enableNotifications">
+                🔔 Enable Notifications
+            </button>
+
+            <a href="{{ url_for('logout') }}">
+                🚪 Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>My Smart Notes</h1>
+
+                <p>
+                    Welcome back, {{ session['username'] }}!
+                    Stay organized and productive.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('add_note') }}"
+               class="add-btn">
+                + Add New Note
+            </a>
+
+        </header>
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% for message in messages %}
+
+                <div class="message">{{ message }}</div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+        <!-- ADVANCED SEARCH -->
+
+        <div class="filter-panel">
+
+            <h3>🔍 Advanced Search</h3>
+
+            <form method="GET"
+                  action="{{ url_for('dashboard') }}"
+                  class="advanced-search">
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search title, description or keywords"
+                    value="{{ search }}"
+                >
+
+                <input
+                    type="text"
+                    name="tag"
+                    placeholder="Search by tag"
+                    value="{{ selected_tag }}"
+                >
+
+                <select name="category">
+
+                    <option value="">All Categories</option>
+
+                    {% for cat in categories %}
+
+                        <option
+                            value="{{ cat }}"
+                            {% if selected_category == cat %}selected{% endif %}
+                        >
+                            {{ cat }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <select name="priority">
+
+                    <option value="">All Priorities</option>
+
+                    {% for p in priorities %}
+
+                        <option
+                            value="{{ p }}"
+                            {% if selected_priority == p %}selected{% endif %}
+                        >
+                            {{ p }} Priority
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <button type="submit" class="add-btn">
+                    Search
+                </button>
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="cancel-btn">
+                    Clear Filters
+                </a>
+
+            </form>
+
+        </div>
+
+
+        <!-- NOTES HEADING -->
+
+        <div class="notes-heading">
+
+            <h2>
+
+                {% if selected_category %}
+                    {{ selected_category }} Notes
+                {% else %}
+                    All Notes
+                {% endif %}
+
+            </h2>
+
+            <span>{{ notes|length }} notes found</span>
+
+        </div>
+
+
+        <!-- NOTES GRID -->
+
+        <div class="notes-grid">
+
+            {% for note in notes %}
+
+                <div class="note-card"
+                     data-note-id="{{ note['id'] }}"
+                     data-reminder="{{ note['reminder_at'] or '' }}">
+
+                    <!-- PIN STATUS -->
+
+                    <div class="card-top">
+
+                        <span class="category-tag">
+                            {{ note['category'] }}
+                        </span>
+
+                        {% if note['is_pinned'] %}
+                            <span class="pinned-label">
+                                📌 PINNED
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- NOTE TITLE -->
+
+                    <h3>{{ note['title'] }}</h3>
+
+
+                    <!-- PRIORITY -->
+
+                    <span class="priority priority-{{ note['priority']|lower }}">
+
+                        {% if note['priority'] == 'High' %}
+                            🔴
+                        {% elif note['priority'] == 'Medium' %}
+                            🟡
+                        {% else %}
+                            🟢
+                        {% endif %}
+
+                        {{ note['priority'] }} Priority
+
+                    </span>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="note-content">
+                        {{ note['content'] or 'No description added.' }}
+                    </p>
+
+
+                    <!-- SUMMARY -->
+
+                    {% if note['summary'] %}
+
+                        <div class="summary-box">
+
+                            <h4>🧠 Smart Summary</h4>
+
+                            <p>{{ note['summary'] }}</p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- TAGS -->
+
+                    {% if note['tags'] %}
+
+                        <p class="tags">
+                            🏷️ {{ note['tags'] }}
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- REMINDER -->
+
+                    {% if note['reminder_at'] %}
+
+                        <p class="reminder-text">
+                            🔔 Reminder: {{ note['reminder_at'] }}
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- DATE -->
+
+                    <div class="note-date">
+
+                        Created: {{ note['created_at'] }}
+
+                    </div>
+
+                    <div class="note-date">
+
+                        Updated: {{ note['updated_at'] }}
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="note-actions">
+
+                        <a
+                            href="{{ url_for('edit_note', note_id=note['id']) }}"
+                            class="edit-btn">
+                            ✏️ Edit
+                        </a>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('toggle_pin', note_id=note['id']) }}">
+
+                            <button type="submit" class="pin-btn">
+
+                                {% if note['is_pinned'] %}
+                                    📌 Unpin
+                                {% else %}
+                                    📍 Pin
+                                {% endif %}
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="note-actions">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('summarize_note', note_id=note['id']) }}">
+
+                            <button type="submit" class="summary-btn">
+                                🧠 Generate Summary
+                            </button>
+
+                        </form>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_note', note_id=note['id']) }}"
+                            onsubmit="return confirmDelete()">
+
+                            <button type="submit" class="delete-btn">
+                                🗑 Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <h2>📒 No Notes Found</h2>
+
+                    <p>
+                        Create your first note or change your search filters.
+                    </p>
+
+                    <a href="{{ url_for('add_note') }}"
+                       class="add-btn">
+                        + Create Your First Note
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

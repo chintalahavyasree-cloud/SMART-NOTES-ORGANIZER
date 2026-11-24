@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Smart Note</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="form-page">
+
+    <div class="form-container">
+
+        <h1>📝 Create Smart Note</h1>
+        <p>Organize your thoughts intelligently.</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <label>Note Title</label>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Enter note title"
+                required
+            >
+
+            <label>Description</label>
+
+            <textarea
+                name="content"
+                rows="8"
+                placeholder="Write your note here..."
+            ></textarea>
+
+            <label>Category</label>
+
+            <select name="category">
+
+                <option value="Auto Detect">
+                    🧠 Automatically Detect Category
+                </option>
+
+                {% for cat in categories %}
+                    <option value="{{ cat }}">
+                        {{ cat }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <label>Tags</label>
+
+            <input
+                type="text"
+                name="tags"
+                placeholder="Python, Exam, Important"
+            >
+
+            <label>Priority</label>
+
+            <select name="priority">
+
+                <option value="High">🔴 High Priority</option>
+
+                <option value="Medium" selected>
+                    🟡 Medium Priority
+                </option>
+
+                <option value="Low">🟢 Low Priority</option>
+
+            </select>
+
+            <label>Reminder Date and Time</label>
+
+            <input
+                type="datetime-local"
+                name="reminder_at"
+            >
+
+            <p class="form-help">
+                Set a reminder for assignments, meetings or deadlines.
+            </p>
+
+            <div class="form-actions">
+
+                <button type="submit" class="add-btn">
+                    💾 Save Smart Note
+                </button>
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

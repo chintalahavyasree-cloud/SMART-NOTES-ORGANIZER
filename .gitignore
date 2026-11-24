@@ -1,0 +1,19 @@
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+myenv/
+.env
+
+# Database files (avoid uploading personal data)
+*.db
+
+# VS Code
+.vscode/
+
+# Python cache
+.pytest_cache/
